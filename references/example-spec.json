@@ -1,0 +1,78 @@
+{
+  "kicker": "我的 AI Coding 工作流",
+  "slides": [
+    {
+      "type": "split",
+      "headline": "瓶颈不在模型，\n在==人==。",
+      "paras": [
+        {"lead": "模型越来越强：", "text": "不听话、不守规矩早已不是问题，\n太严的规矩和流程反而成了负面约束。"},
+        {"lead": "人成了瓶颈：", "text": "短时间里很难想全一个模块的\n方方面面和边界条件，更来不及做出大量决策。"}
+      ],
+      "answer": {"label": "我的最佳实践", "tokens": ["/mattpocock-skills", "GitHub CLI"]},
+      "art": {"color": "clay", "name": "bottle",
+              "params": {"right_title": "人的决策", "right_sub": "想不全 · 决不完", "left_title": "模型能力", "left_sub": "越来越强"}}
+    },
+    {
+      "type": "split",
+      "headline": "让 AI 拷问你",
+      "sub": "把脑子里的想法撬出来，\n把所有可能的问题“逼”你决策出来。",
+      "list": ["想到什么说什么，**不用管逻辑和严谨**", "一次只问一个问题，**每题附上推荐答案**", "你只管拍板，**AI 用 GitHub CLI 记进 issue**"],
+      "art": {"type": "terminal", "color": "oat", "title": "~/my-app — claude",
+        "lines": [
+          {"type": "prompt", "cmd": "/wayfinder", "arg": "github.com/…/issues/13"},
+          {"type": "gap"},
+          {"type": "ai", "chip": "离线保存", "text": "用户离线时点了「保存」，", "cont": ["这条数据怎么处理？"]},
+          {"type": "options", "items": [
+            {"text": "先存本地，联网后自动补传", "rec": "推荐", "on": true},
+            {"text": "直接报错，提示联网后重试"},
+            {"text": "其他，我直接说"}]},
+          {"type": "user", "text": "选 1。补传失败的话，要让我看得到。"},
+          {"type": "ai", "text": "记下了。顺着这个决定，下一个问题——", "cont": ["补传一直失败：静默重试，还是提醒用户处理？"]}
+        ],
+        "input": {"hint": "直接说，想到什么说什么", "mic": true}}
+    },
+    {
+      "type": "flow",
+      "headline": "决策期：一张地图，逐张拷问",
+      "tag": {"text": "决策 ticket", "style": "outline"},
+      "subtitle": "**你来解决**，终点是一份完整的 spec",
+      "stations": [
+        {"visual": {"type": "window", "prompt": {"cmd": "/wayfinder"},
+                    "blocks": [{"type": "voice", "text": "想做个离线也能用的功能，断网先存着，联网再补上，嗯……"}]},
+         "label": {"num": 1, "text": "倒出想法"}, "caption": "新会话里用 /wayfinder，\n语音说，想到什么说什么"},
+        {"visual": {"type": "issue", "state": "open", "title": "决策地图：离线同步", "id": "#10", "label": "wayfinder:map", "progress": "3/5 closed",
+                    "rows": [{"text": "数据先存在哪", "id": "#11", "state": "done"}, {"text": "冲突以谁为准", "id": "#12", "state": "done"},
+                             {"text": "离线保存怎么处理", "id": "#13", "state": "done"}, {"text": "补传失败怎么提示", "id": "#14", "state": "open"},
+                             {"text": "这一期做到哪", "id": "#15", "state": "open"}]},
+         "label": {"num": 2, "text": "生成决策地图"}, "caption": "AI 边问边评估规模，用 gh 建出\n1 个 issue，下挂若干子 issue"},
+        {"visual": {"type": "window", "stacked": true, "stamp": "CLOSED", "prompt": {"cmd": "/wayfinder", "arg": "…/14"},
+                    "blocks": [{"type": "qa", "items": [{"q": "补传失败怎么提示？"}, {"a": "连续失败 3 次再提醒"}, {"q": "提醒放在哪？"}, {"a": "首页顶部横条"}]}]},
+         "label": {"num": 3, "text": "逐张拷问"}, "caption": "每张子 issue 一个新会话，\n多轮拷问，答完即 closed"},
+        {"visual": {"type": "illus", "name": "doc", "params": {"title": "spec.md"}},
+         "label": {"num": 4, "text": "汇总成 spec"}, "caption": "全部 closed 后，\n就是完整的施工图"}
+      ]
+    },
+    {
+      "type": "flow",
+      "headline": "施工期：拆成任务 ticket，交给 AI",
+      "tag": {"text": "任务 ticket", "style": "clay"},
+      "subtitle": "**AI 来施工**，终点是整个模块交付上线",
+      "stations": [
+        {"visual": {"type": "window", "small_prompt": true, "prompt": {"cmd": "/to-tickets", "arg": "spec.md"},
+                    "blocks": [{"type": "illus", "name": "ticket-fan"}]},
+         "label": {"num": 5, "text": "拆成任务 ticket"}, "caption": "/to-tickets + spec 路径，\nAI 拆成一张张任务 ticket"},
+        {"visual": {"type": "issue", "title": "任务 ticket：离线同步", "id": "4 张", "id_first": true,
+                    "rows": [{"id": "#21", "text": "最小闭环：存本地 + 补传", "state": "done", "badge": {"text": "已合并", "tone": "ok"}},
+                             {"id": "#22", "text": "冲突以最后修改为准", "state": "done", "badge": {"text": "已合并", "tone": "ok"}},
+                             {"id": "#23", "text": "补传失败提醒", "state": "run", "badge": {"text": "施工中", "tone": "run"}},
+                             {"id": "#24", "text": "同步状态展示", "dep": "← #23", "state": "open", "badge": {"text": "待开始"}}]},
+         "label": {"icon": "ticket", "text": "按依赖排好的任务"}, "caption": "决策 ticket 的终点是 spec；\n任务 ticket 的终点是交付上线"},
+        {"visual": {"type": "window", "stacked": true, "prompt": {"cmd": "/implement", "arg": "…/23"},
+                    "blocks": [{"type": "log", "items": [{"text": "先写失败的测试"}, {"text": "实现，直到测试变绿"}, {"text": "跑全量测试"}, {"text": "代码审查中…", "state": "run"}]}]},
+         "label": {"num": 6, "text": "逐张施工"}, "caption": "每张任务一个新会话，\n/implement + 链接就行"},
+        {"visual": {"type": "illus", "name": "flag"},
+         "label": {"icon": "check", "text": "交付上线"}}
+      ]
+    }
+  ]
+}
